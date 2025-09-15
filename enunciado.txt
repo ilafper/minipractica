@@ -1,0 +1,8 @@
+elegir el tipo de fichero conque trabajar.
+
+1.json
+2.txt
+3. et etc.
+
+una vez eliges , te muestran las opciones de dar de alta, modificar, borrar, filtrar, lectura y salir
+
