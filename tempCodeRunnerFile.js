@@ -1,2 +1,0 @@
-
-function modificarJson(degi,datosCarta) {

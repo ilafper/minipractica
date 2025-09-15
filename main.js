@@ -179,7 +179,8 @@ async function modificarJson(degi,datosCarta) {
 
                 console.log("Carta actualizada:");
                 console.log(datosCarta);
-                
+               
+                fs.writeFileSync('C:/Users/ialfper/Desktop/minipractica/cartas.json', JSON.stringify(datosCarta), 'utf-8');
                 
                 break;
             case 2:
