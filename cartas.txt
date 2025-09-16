@@ -1,0 +1,36 @@
+
+id:1
+nombre:Agumon
+descripcion:adasdasda adsdasdasd
+rareza:epico
+
+id:2
+nombre:Gabumon
+descripcion:lobo con piel
+rareza:raro
+
+id:3
+nombre:a
+descripcion:b
+rareza:c
+
+id:4
+nombre:danumon
+descripcion:el ser mas rapido
+rareza:raro
+
+id:5
+nombre:a
+descripcion:a
+rareza:a
+
+id:6
+nombre:h
+descripcion:h
+rareza:h
+
+id:7
+nombre:l
+descripcion:l
+rareza:l
+

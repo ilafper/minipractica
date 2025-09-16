@@ -1,4 +1,4 @@
-const { log } = require("console");
+
 const fs = require("fs");
 const readline = require("readline");
 const rl = readline.createInterface({
@@ -16,6 +16,63 @@ function cargardatos() {
         return []; // Devuelve un array vacío en caso de error
     }
 }
+
+
+
+
+
+
+function leerTxt() {
+  try {
+    const data = fs.readFileSync("cartas.txt", "utf-8");
+
+    // Dividir en bloques por doble salto de línea
+    // Normalizar saltos de línea (Windows o Linux)
+    const normalizado = data.replace(/\r\n/g, "\n").trim();
+
+    // Dividir en bloques por línea vacía
+    const bloques = normalizado.split(/\n\s*\n/);
+
+    const cartasLeidas = bloques.map(bloque => {
+      const lineas = bloque.split("\n");
+      const carta = {};
+      lineas.forEach(linea => {
+        const partes = linea.split(":");
+        if (partes.length >= 2) {
+          const clave = partes[0].trim();
+          const valor = partes.slice(1).join(":").trim(); // soporta ":" en valores
+          carta[clave] = valor;
+        }
+      });
+      return carta;
+    });
+
+    return cartasLeidas;
+  } catch (err) {
+    console.error("Error al leer el archivo:", err.message);
+    return [];
+  }
+}
+
+function escribirTXT(carta) {
+  try {
+    // Construir el texto de la carta
+    const contenido = 
+      `id:${carta.id}\n` +
+      `nombre:${carta.nombre}\n` +
+      `descripcion:${carta.descripcion}\n` +
+      `rareza:${carta.rareza}\n\n`;
+
+    // Añadir al archivo sin borrar lo que ya hay
+    fs.appendFileSync("cartas.txt", contenido, "utf-8");
+
+
+    console.log(`Carta "${carta.nombre}" guardada `);
+  } catch (err) {
+    console.error("Error al guardar la carta:", err.message);
+  }
+}
+
 
 function leeMenu(question) {
     return new Promise((resolve) => {
@@ -40,10 +97,11 @@ async function menu() {
 
         switch (opcion) {
             case 1:
-                    await menuJSON();
+
+                await menuJSON();
                 break;
             case 2:
-               
+               await menuTXT();
                 break;
             case 3:
                console.log("Saliendo del menú");
@@ -56,6 +114,8 @@ async function menu() {
     }
 }
 menu();
+
+
 
 async function menuJSON() {
     let opcion = 0;
@@ -137,7 +197,7 @@ async function menuJSON() {
                 break;
             case 5:
                 console.log("Saliendo del menú");
-                rl.close(); // Corrección aquí
+                rl.close();
                 break;
               
             default:
@@ -148,7 +208,60 @@ async function menuJSON() {
 }
 
 
+async function menuTXT() {
+    let opcion = 0;
+    while (opcion!== 5) {
+       console.log("\n MENU DE TXT");
+        console.log("1. Crear carta nueva");
+        console.log("2. Borrar carta nueva");
+        console.log("3. Mostrar las cartas");
+        console.log("4. Modificar");
+        console.log("5. Salir");
 
+
+        opcion = parseInt(await leeMenu("Seleccione opción:"));
+
+        switch (opcion) {
+            case 1:
+                    const cart = leerTxt();
+                    let idTXT= cart.length +1;
+                    let nuevoNombreTXT = await leeMenu("Escriba el nuevo nombre: ");
+                    let nuevaDesTXT = await leeMenu("Escriba el nuevo nombre: ");
+                    let nuevaRarezaTXT = await leeMenu("Escriba el nuevo nombre: ");
+                    
+
+                    let nuevoTXT={
+                        "id":idTXT,
+                        "nombre":nuevoNombreTXT,
+                        "descripcion":nuevaDesTXT,
+                        "rareza":nuevaRarezaTXT
+                    }
+                    escribirTXT(nuevoTXT);
+
+                
+                break;
+            case 2:
+               
+                break;
+            case 3:
+               const cart2 = leerTxt();
+                console.log(cart2);
+               
+                break;
+            case 4:
+
+                
+                break;
+            case 5:
+                console.log("Saliendo del menú");
+                rl.close(); // Corrección aquí
+                break;
+            default:
+                console.log("Opción no válida");
+                break;
+        }
+    }
+}
 
 async function modificarJson(degi,datosCarta) {
     let opcion = 0;
@@ -184,10 +297,45 @@ async function modificarJson(degi,datosCarta) {
                 
                 break;
             case 2:
+               let descripcionActual=degi.descripcion;
+                console.log(descripcionActual);
+                
+                let descModificar= await leeMenu("Escribe la  descripcion nombre: ");
+                console.log(descModificar);
+                
+                let digimonActualizar2 = datosCarta.find(digimon => digimon.id === degi.id);
+                if (digimonActualizar2) {
+                digimonActualizar2.descripcion = descModificar;
+                }
+
+
+                console.log("Carta actualizada:");
+                console.log(datosCarta);
+
+
                
+                fs.writeFileSync('C:/Users/ialfper/Desktop/minipractica/cartas.json', JSON.stringify(datosCarta), 'utf-8');
                 break;
             case 3:
+
+               let rareActual=degi.rareza;
+                console.log(rareActual);
+                
+                let rareModificar= await leeMenu("Escribe la nueva raeza: ");
+                console.log(descModificar);
+                
+                let digimonActualizar3 = datosCarta.find(digimon => digimon.id === degi.id);
+                if (digimonActualizar3) {
+                digimonActualizar3.rareza = rareModificar;
+                }
+
+
+
+                console.log("Carta actualizada:");
+                console.log(datosCarta);
                
+                fs.writeFileSync('C:/Users/ialfper/Desktop/minipractica/cartas.json', JSON.stringify(datosCarta), 'utf-8');
+                break;
 
             case 4:
                 await menuJSON();
