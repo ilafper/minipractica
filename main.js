@@ -73,6 +73,29 @@ function escribirTXT(carta) {
   }
 }
 
+function borrarCartaPorId(idABorrar) {
+  const fs = require("fs");
+  try {
+    const data = fs.readFileSync("cartas.txt", "utf-8").replace(/\r\n/g, "\n").trim();
+    const bloques = data.split(/\n\s*\n/);
+
+    const cartasFiltradas = bloques.filter(bloque => {
+      const lineas = bloque.split("\n");
+      for (let linea of lineas) {
+        const partes = linea.split(":");
+        if (partes.length >= 2 && partes[0].trim() === "id" && partes[1].trim() === String(idABorrar)) {
+          return false; // borrar esta carta
+        }
+      }
+      return true; // conservar
+    });
+
+    fs.writeFileSync("cartas.txt", cartasFiltradas.join("\n\n") + "\n\n", "utf-8");
+    console.log(`Carta con id=${idABorrar} eliminada ✅`);
+  } catch (err) {
+    console.error("Error al borrar la carta:", err.message);
+  }
+}
 
 function leeMenu(question) {
     return new Promise((resolve) => {
@@ -236,12 +259,29 @@ async function menuTXT() {
                         "descripcion":nuevaDesTXT,
                         "rareza":nuevaRarezaTXT
                     }
+
+
                     escribirTXT(nuevoTXT);
 
                 
                 break;
             case 2:
-               
+                    let cartborar = leerTxt();
+                    console.log("holi");
+                    
+                    for (let i = 0; i < cartborar.length; i++) {
+                        console.log( cartborar[i].id +" "+ cartborar[i].nombre);
+                        
+                        
+                    }
+
+                    let cartaAborrarTXT=await leeMenu("Seleccione carta a borrar ");
+                    console.log("id a borrar: "+ cartaAborrarTXT);
+                    
+                    borrarCartaPorId(cartaAborrarTXT);
+                    
+
+                    
                 break;
             case 3:
                const cart2 = leerTxt();
@@ -254,7 +294,7 @@ async function menuTXT() {
                 break;
             case 5:
                 console.log("Saliendo del menú");
-                rl.close(); // Corrección aquí
+                rl.close(); 
                 break;
             default:
                 console.log("Opción no válida");

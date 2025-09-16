@@ -1,9 +1,3 @@
-
-id:1
-nombre:Agumon
-descripcion:adasdasda adsdasdasd
-rareza:epico
-
 id:2
 nombre:Gabumon
 descripcion:lobo con piel
