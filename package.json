@@ -1,0 +1,24 @@
+{
+  "dependencies": {
+    "mysql2": "^3.15.0"
+  },
+  "name": "minipractica",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ilafper/minipractica.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ilafper/minipractica/issues"
+  },
+  "homepage": "https://github.com/ilafper/minipractica#readme"
+}

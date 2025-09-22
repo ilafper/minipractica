@@ -1,3 +1,22 @@
+// Importamos mysql2
+const mysql = require('mysql2');
+
+// Creamos la conexión
+const connection = mysql.createConnection({
+  host: 'localhost',     // Dirección del servidor (127.0.0.1 si es local)
+  user: 'root',          // Usuario de MySQL
+  password: '', // Contraseña de MySQL
+  database: 'prueba' // Base de datos
+});
+
+// Conectar
+connection.connect(err => {
+  if (err) {
+    console.error('❌ Error al conectar: ' + err.stack);
+    return;
+  }
+  console.log('✅ Conectado a MySQL con id ' + connection.threadId);
+});
 
 const fs = require("fs");
 const readline = require("readline");
