@@ -1,39 +1,49 @@
-// Importamos mysql2
-const mysql = require('mysql2');
+const mysql = require('mysql2/promise'); // Importamos la versión con promesas
 
-// Creamos la conexión
-const connection = mysql.createConnection({
-  host: 'localhost',     // Dirección del servidor (127.0.0.1 si es local)
-  user: 'root',          // Usuario de MySQL
-  password: '', // Contraseña de MySQL
-  database: 'prueba' // Base de datos
-});
+// Función que carga los datos y devuelve una promesa
+async function cargar() {
+  try {
+    const connection = await mysql.createConnection({
+      host: 'localhost',
+      user: 'root',
+      password: '',
+      database: 'digimon'
+    });
 
-// Conectar
-connection.connect(err => {
-  if (err) {
-    console.error('❌ Error al conectar: ' + err.stack);
-    return;
+    const [rows] = await connection.query('SELECT * FROM bichos');
+    await connection.end();
+
+    return rows; // Devuelve los datos como array
+  } catch (err) {
+    console.error('❌ Error al cargar bichos:', err);
+    return [];
   }
-  console.log('✅ Conectado a MySQL con id ' + connection.threadId);
-});
+}
+
+// Usar la función con async/await
+
+
+
+
+
+
 
 const fs = require("fs");
 const readline = require("readline");
 const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
+  input: process.stdin,
+  output: process.stdout,
 });
 
 
 function cargardatos() {
-    try {
-        let datos = fs.readFileSync('cartas.json'); // Lee los datos del archivo Eventos.json
-        return JSON.parse(datos); // Devuelve los eventos parseados desde JSON a objetos JavaScript
-    } catch (error) {
-        console.error("Error al cargar los eventos:", error); // Manejo de errores en caso de fallo al leer el archivo
-        return []; // Devuelve un array vacío en caso de error
-    }
+  try {
+    let datos = fs.readFileSync('cartas.json'); // Lee los datos del archivo Eventos.json
+    return JSON.parse(datos); // Devuelve los eventos parseados desde JSON a objetos JavaScript
+  } catch (error) {
+    console.error("Error al cargar los eventos:", error); // Manejo de errores en caso de fallo al leer el archivo
+    return []; // Devuelve un array vacío en caso de error
+  }
 }
 
 
@@ -76,7 +86,7 @@ function leerTxt() {
 function escribirTXT(carta) {
   try {
     // Construir el texto de la carta
-    const contenido = 
+    const contenido =
       `id:${carta.id}\n` +
       `nombre:${carta.nombre}\n` +
       `descripcion:${carta.descripcion}\n` +
@@ -117,291 +127,345 @@ function borrarCartaPorId(idABorrar) {
 }
 
 function leeMenu(question) {
-    return new Promise((resolve) => {
-        rl.question(question, (respuesta) => {
-            resolve(respuesta);
-        });
+  return new Promise((resolve) => {
+    rl.question(question, (respuesta) => {
+      resolve(respuesta);
     });
+  });
 }
 
 
 
 async function menu() {
-    let opcion = 0;
+  let opcion = 0;
+  while (opcion !== 4) {
+    console.log("\nElige el tipo de fichero a trabajar");
+    console.log("1. JSON");
+    console.log("2. TXT");
+    console.log("3. sql");
+    console.log("4. SALIR");
 
-    while (opcion!== 3) {
-        console.log("\nElige el tipo de fichero a trabajar");
-        console.log("1. JSON");
-        console.log("2. TXT");
-        console.log("3. SALIR");
+    opcion = parseInt(await leeMenu("Seleccione opción:"));
 
-        opcion = parseInt(await leeMenu("Seleccione opción:"));
+    switch (opcion) {
+      case 1:
 
-        switch (opcion) {
-            case 1:
-
-                await menuJSON();
-                break;
-            case 2:
-               await menuTXT();
-                break;
-            case 3:
-               console.log("Saliendo del menú");
-                rl.close(); // Corrección aquí
-                break;
-            default:
-                console.log("Opción no válida");
-                break;
-        }
+        await menuJSON();
+        break;
+      case 2:
+        await menuTXT();
+        break;
+      case 3:
+        await menuSQL();
+        break;
+      case 4:
+        console.log("Saliendo del menú");
+        rl.close(); // Corrección aquí
+        break;
+      default:
+        console.log("Opción no válida");
+        break;
     }
+  }
 }
 menu();
 
+async function menuSQL() {
+  let opcion = 0;
+  while (opcion !== 5) {
+    console.log("\n MENU DE SQL");
+    console.log("1. Crear carta nueva");
+    console.log("2. Borrar carta nueva");
+    console.log("3. Mostrar las cartas");
+    console.log("4. Modificar");
+    console.log("5. Salir");
 
+
+    opcion = parseInt(await leeMenu("Seleccione opción:"));
+
+    switch (opcion) {
+      case 1:
+        
+
+
+        break;
+      case 2:
+
+
+
+
+        break;
+      case 3:
+        let bichos = cargar();
+        console.log(aaaa);
+        
+        console.log(bichos);
+        
+        for (let i = 0; i < bichos.length; i++) {
+
+          console.log("id: " + bichos[i].id + "-->" + "Nombre: " + bichos[i].nombre + "-->" + "Descripcion: " + bichos[i].descripcion + "-->" + "Rareza: " + bichos[i].rareza);
+
+        }
+
+        break;
+      case 4:
+
+
+        break;
+      case 5:
+        console.log("Saliendo del menú");
+        rl.close();
+        break;
+      default:
+        console.log("Opción no válida");
+        break;
+    }
+  }
+}
 
 async function menuJSON() {
-    let opcion = 0;
-    let datosCarta= await cargardatos();
-    while (opcion!== 5) {
-        console.log("\n MENU DE JSON");
-        console.log("1. Crear carta nueva");
-        console.log("2. Borrar carta nueva");
-        console.log("3. Mostrar las cartas");
-        console.log("4. Modificar");
-        console.log("5. Salir");
+  let opcion = 0;
+  let datosCarta = await cargardatos();
+  while (opcion !== 5) {
+    console.log("\n MENU DE JSON");
+    console.log("1. Crear carta nueva");
+    console.log("2. Borrar carta nueva");
+    console.log("3. Mostrar las cartas");
+    console.log("4. Modificar");
+    console.log("5. Salir");
 
-        opcion = parseInt(await leeMenu("Seleccione opción:"));
+    opcion = parseInt(await leeMenu("Seleccione opción:"));
 
-        switch (opcion) {
-            case 1:
-              
-                for (let i = 0; i < datosCarta.length; i++) {
-                   
-                }
-                console.log("Rellena los campos para crear la nueva carta");
-                
-                let nuevoNombre=await leeMenu("Nuevo nombre:");
-                let nuevaDesc=await leeMenu("Nueva descripcion:");
-                let nuevaRareza=await leeMenu("Nuevo rareza:");
-                let nuevoId=datosCarta.length + 1;
-               
-                
-                let nuevaCarta={
-                    "id":nuevoId,
-                    "nombre":nuevoNombre,
-                    "descripcion":nuevaDesc,
-                    "rareza":nuevaRareza
+    switch (opcion) {
+      case 1:
 
-                }
-                console.log(nuevaCarta);
-                
-                datosCarta.push(nuevaCarta);
-                break;
-            case 2:
-                console.log("Lista de cartas a eliminar");
-                for (let i = 0; i < datosCarta.length; i++) {
-                    console.log(datosCarta[i].id +" "+ datosCarta[i].nombre );
-                    
-                    
-                }
+        for (let i = 0; i < datosCarta.length; i++) {
 
-                let cartaSeleccionada=await leeMenu("Selecciona la carta a borrar: ");
-                let cartaEliminar = datosCarta[cartaSeleccionada - 1];
-                console.log("HAS SELECCIONADO ESTA CARTA:");
-                console.log(cartaEliminar);
-                
-                
-                datosCarta.splice(cartaEliminar ,1);
-                break;
-            case 3:
-               
-                for (let i = 0; i < datosCarta.length; i++) {
-                   
-                    console.log("id: "+ datosCarta[i].id + "-->" +"Nombre: "+ datosCarta[i].nombre+"-->"+"Descripcion: " + datosCarta[i].descripcion+ "-->" +"Rareza: "+ datosCarta[i].rareza);
-                
-                }
-                break;
-            case 4:
-                console.log("Selecciona la carta a modificar: ");
-                
-                for (let i = 0; i < datosCarta.length; i++) {
-                
-                   console.log(datosCarta[i].id +" "+ datosCarta[i].nombre);
-                   
-                    
-                }
-
-                let digiModificar=await leeMenu("Selecciona la carta a modificar: ");
-                let degi = datosCarta[digiModificar - 1];
-                console.log(degi);
-                
-                await modificarJson(degi,datosCarta);
-                break;
-            case 5:
-                console.log("Saliendo del menú");
-                rl.close();
-                break;
-              
-            default:
-                console.log("Opción no válida");
-                break;
         }
+        console.log("Rellena los campos para crear la nueva carta");
+
+        let nuevoNombre = await leeMenu("Nuevo nombre:");
+        let nuevaDesc = await leeMenu("Nueva descripcion:");
+        let nuevaRareza = await leeMenu("Nuevo rareza:");
+        let nuevoId = datosCarta.length + 1;
+
+
+        let nuevaCarta = {
+          "id": nuevoId,
+          "nombre": nuevoNombre,
+          "descripcion": nuevaDesc,
+          "rareza": nuevaRareza
+
+        }
+        console.log(nuevaCarta);
+
+        datosCarta.push(nuevaCarta);
+        break;
+      case 2:
+        console.log("Lista de cartas a eliminar");
+        for (let i = 0; i < datosCarta.length; i++) {
+          console.log(datosCarta[i].id + " " + datosCarta[i].nombre);
+
+
+        }
+
+        let cartaSeleccionada = await leeMenu("Selecciona la carta a borrar: ");
+        let cartaEliminar = datosCarta[cartaSeleccionada - 1];
+        console.log("HAS SELECCIONADO ESTA CARTA:");
+        console.log(cartaEliminar);
+
+
+        datosCarta.splice(cartaEliminar, 1);
+        break;
+      case 3:
+
+        for (let i = 0; i < datosCarta.length; i++) {
+
+          console.log("id: " + datosCarta[i].id + "-->" + "Nombre: " + datosCarta[i].nombre + "-->" + "Descripcion: " + datosCarta[i].descripcion + "-->" + "Rareza: " + datosCarta[i].rareza);
+
+        }
+        break;
+      case 4:
+        console.log("Selecciona la carta a modificar: ");
+
+        for (let i = 0; i < datosCarta.length; i++) {
+
+          console.log(datosCarta[i].id + " " + datosCarta[i].nombre);
+
+
+        }
+
+        let digiModificar = await leeMenu("Selecciona la carta a modificar: ");
+        let degi = datosCarta[digiModificar - 1];
+        console.log(degi);
+
+        await modificarJson(degi, datosCarta);
+        break;
+      case 5:
+        console.log("Saliendo del menú");
+        rl.close();
+        break;
+
+      default:
+        console.log("Opción no válida");
+        break;
     }
+  }
 }
 
 
 async function menuTXT() {
-    let opcion = 0;
-    while (opcion!== 5) {
-       console.log("\n MENU DE TXT");
-        console.log("1. Crear carta nueva");
-        console.log("2. Borrar carta nueva");
-        console.log("3. Mostrar las cartas");
-        console.log("4. Modificar");
-        console.log("5. Salir");
+  let opcion = 0;
+  while (opcion !== 5) {
+    console.log("\n MENU DE TXT");
+    console.log("1. Crear carta nueva");
+    console.log("2. Borrar carta nueva");
+    console.log("3. Mostrar las cartas");
+    console.log("4. Modificar");
+    console.log("5. Salir");
 
 
-        opcion = parseInt(await leeMenu("Seleccione opción:"));
+    opcion = parseInt(await leeMenu("Seleccione opción:"));
 
-        switch (opcion) {
-            case 1:
-                    const cart = leerTxt();
-                    let idTXT= cart.length +1;
-                    let nuevoNombreTXT = await leeMenu("Escriba el nuevo nombre: ");
-                    let nuevaDesTXT = await leeMenu("Escriba el nuevo nombre: ");
-                    let nuevaRarezaTXT = await leeMenu("Escriba el nuevo nombre: ");
-                    
-
-                    let nuevoTXT={
-                        "id":idTXT,
-                        "nombre":nuevoNombreTXT,
-                        "descripcion":nuevaDesTXT,
-                        "rareza":nuevaRarezaTXT
-                    }
+    switch (opcion) {
+      case 1:
+        const cart = leerTxt();
+        let idTXT = cart.length + 1;
+        let nuevoNombreTXT = await leeMenu("Escriba el nuevo nombre: ");
+        let nuevaDesTXT = await leeMenu("Escriba el nuevo nombre: ");
+        let nuevaRarezaTXT = await leeMenu("Escriba el nuevo nombre: ");
 
 
-                    escribirTXT(nuevoTXT);
-
-                
-                break;
-            case 2:
-                    let cartborar = leerTxt();
-                    console.log("holi");
-                    
-                    for (let i = 0; i < cartborar.length; i++) {
-                        console.log( cartborar[i].id +" "+ cartborar[i].nombre);
-                        
-                        
-                    }
-
-                    let cartaAborrarTXT=await leeMenu("Seleccione carta a borrar ");
-                    console.log("id a borrar: "+ cartaAborrarTXT);
-                    
-                    borrarCartaPorId(cartaAborrarTXT);
-                    
-
-                    
-                break;
-            case 3:
-               const cart2 = leerTxt();
-                console.log(cart2);
-               
-                break;
-            case 4:
-
-                
-                break;
-            case 5:
-                console.log("Saliendo del menú");
-                rl.close(); 
-                break;
-            default:
-                console.log("Opción no válida");
-                break;
+        let nuevoTXT = {
+          "id": idTXT,
+          "nombre": nuevoNombreTXT,
+          "descripcion": nuevaDesTXT,
+          "rareza": nuevaRarezaTXT
         }
+
+
+        escribirTXT(nuevoTXT);
+
+
+        break;
+      case 2:
+        let cartborar = leerTxt();
+        console.log("holi");
+
+        for (let i = 0; i < cartborar.length; i++) {
+          console.log(cartborar[i].id + " " + cartborar[i].nombre);
+
+
+        }
+
+        let cartaAborrarTXT = await leeMenu("Seleccione carta a borrar ");
+        console.log("id a borrar: " + cartaAborrarTXT);
+
+        borrarCartaPorId(cartaAborrarTXT);
+
+
+
+        break;
+      case 3:
+        const cart2 = leerTxt();
+        console.log(cart2);
+
+        break;
+      case 4:
+
+
+        break;
+      case 5:
+        console.log("Saliendo del menú");
+        rl.close();
+        break;
+      default:
+        console.log("Opción no válida");
+        break;
     }
+  }
 }
 
-async function modificarJson(degi,datosCarta) {
-    let opcion = 0;
+async function modificarJson(degi, datosCarta) {
+  let opcion = 0;
 
-    while (opcion!== 3) {
-        console.log("\n Elige el campo a modificar");
-        console.log("1. Nombre");
-        console.log("2. Descripcion");
-        console.log("3. Rareza");
-        console.log("4. Atras");
-        
-
-        opcion = parseInt(await leeMenu("Seleccione opción:"));
-
-        switch (opcion) {
-            case 1:
-                let nombreActual=degi.nombre;
-                console.log(nombreActual);
-                
-                let nombreModificar= await leeMenu("Escribe el nuevo nombre: ");
-                console.log(nombreModificar);
-                
-                let digimonActualizar = datosCarta.find(digimon => digimon.id === degi.id);
-                if (digimonActualizar) {
-                digimonActualizar.nombre = nombreModificar;
-                }
+  while (opcion !== 3) {
+    console.log("\n Elige el campo a modificar");
+    console.log("1. Nombre");
+    console.log("2. Descripcion");
+    console.log("3. Rareza");
+    console.log("4. Atras");
 
 
-                console.log("Carta actualizada:");
-                console.log(datosCarta);
-               
-                fs.writeFileSync('C:/Users/ialfper/Desktop/minipractica/cartas.json', JSON.stringify(datosCarta), 'utf-8');
-                
-                break;
-            case 2:
-               let descripcionActual=degi.descripcion;
-                console.log(descripcionActual);
-                
-                let descModificar= await leeMenu("Escribe la  descripcion nombre: ");
-                console.log(descModificar);
-                
-                let digimonActualizar2 = datosCarta.find(digimon => digimon.id === degi.id);
-                if (digimonActualizar2) {
-                digimonActualizar2.descripcion = descModificar;
-                }
+    opcion = parseInt(await leeMenu("Seleccione opción:"));
 
+    switch (opcion) {
+      case 1:
+        let nombreActual = degi.nombre;
+        console.log(nombreActual);
 
-                console.log("Carta actualizada:");
-                console.log(datosCarta);
+        let nombreModificar = await leeMenu("Escribe el nuevo nombre: ");
+        console.log(nombreModificar);
 
-
-               
-                fs.writeFileSync('C:/Users/ialfper/Desktop/minipractica/cartas.json', JSON.stringify(datosCarta), 'utf-8');
-                break;
-            case 3:
-
-               let rareActual=degi.rareza;
-                console.log(rareActual);
-                
-                let rareModificar= await leeMenu("Escribe la nueva raeza: ");
-                console.log(descModificar);
-                
-                let digimonActualizar3 = datosCarta.find(digimon => digimon.id === degi.id);
-                if (digimonActualizar3) {
-                digimonActualizar3.rareza = rareModificar;
-                }
-
-
-
-                console.log("Carta actualizada:");
-                console.log(datosCarta);
-               
-                fs.writeFileSync('C:/Users/ialfper/Desktop/minipractica/cartas.json', JSON.stringify(datosCarta), 'utf-8');
-                break;
-
-            case 4:
-                await menuJSON();
-                break;
-            default:
-                console.log("Opción no válida");
-                break;
+        let digimonActualizar = datosCarta.find(digimon => digimon.id === degi.id);
+        if (digimonActualizar) {
+          digimonActualizar.nombre = nombreModificar;
         }
+
+
+        console.log("Carta actualizada:");
+        console.log(datosCarta);
+
+        fs.writeFileSync('C:/Users/ialfper/Desktop/minipractica/cartas.json', JSON.stringify(datosCarta), 'utf-8');
+
+        break;
+      case 2:
+        let descripcionActual = degi.descripcion;
+        console.log(descripcionActual);
+
+        let descModificar = await leeMenu("Escribe la  descripcion nombre: ");
+        console.log(descModificar);
+
+        let digimonActualizar2 = datosCarta.find(digimon => digimon.id === degi.id);
+        if (digimonActualizar2) {
+          digimonActualizar2.descripcion = descModificar;
+        }
+
+
+        console.log("Carta actualizada:");
+        console.log(datosCarta);
+
+
+
+        fs.writeFileSync('C:/Users/ialfper/Desktop/minipractica/cartas.json', JSON.stringify(datosCarta), 'utf-8');
+        break;
+      case 3:
+
+        let rareActual = degi.rareza;
+        console.log(rareActual);
+
+        let rareModificar = await leeMenu("Escribe la nueva raeza: ");
+        console.log(descModificar);
+
+        let digimonActualizar3 = datosCarta.find(digimon => digimon.id === degi.id);
+        if (digimonActualizar3) {
+          digimonActualizar3.rareza = rareModificar;
+        }
+
+
+
+        console.log("Carta actualizada:");
+        console.log(datosCarta);
+
+        fs.writeFileSync('C:/Users/ialfper/Desktop/minipractica/cartas.json', JSON.stringify(datosCarta), 'utf-8');
+        break;
+
+      case 4:
+        await menuJSON();
+        break;
+      default:
+        console.log("Opción no válida");
+        break;
     }
+  }
 }
