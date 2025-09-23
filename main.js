@@ -4,7 +4,7 @@ const mysql = require('mysql2/promise'); // Importamos la versión con promesas
 
 
 async function cargar() {
-
+//
   try {
     const connection = await mysql.createConnection({
       host: 'localhost',
