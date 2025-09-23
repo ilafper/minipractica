@@ -567,7 +567,7 @@ async function modificarNombre(id, nuevoValor) {
     const sql = `UPDATE bichos SET nombre = ? WHERE id = ?`;
     const [result] = await connection.execute(sql, [nuevoValor, id]);
 
-   if (result.affectedRows > 0) {
+    if (result.affectedRows > 0) {
       console.log(`Carta con id ${id} modificada. Nuevo nombre: ${nuevoValor}`);
     } else {
       console.log("No se encontró la carta con ese ID.");
@@ -590,7 +590,7 @@ async function modificarDescripcion(id, nuevoValor) {
     const sql = `UPDATE bichos SET descripcion = ? WHERE id = ?`;
     const [result] = await connection.execute(sql, [nuevoValor, id]);
 
-   if (result.affectedRows > 0) {
+    if (result.affectedRows > 0) {
       console.log(`Carta con id ${id} modificada. Nueva desc: ${nuevoValor}`);
     } else {
       console.log("No se encontró la carta con ese ID.");
@@ -613,7 +613,7 @@ async function modificarRareza(id, nuevoValor) {
     const sql = `UPDATE bichos SET rareza = ? WHERE id = ?`;
     const [result] = await connection.execute(sql, [nuevoValor, id]);
 
-   if (result.affectedRows > 0) {
+    if (result.affectedRows > 0) {
       console.log(`Carta con id ${id} modificada. Nueva rareza: ${nuevoValor}`);
     } else {
       console.log("No se encontró la carta con ese ID.");
@@ -641,31 +641,31 @@ async function modificarSQL(digimon) {
       case 1:
         console.log("Nombre actual: " + digimon.nombre);
         let nombreModificar = await leeMenu("Escribe el nuevo nombre: ");
-        let id= digimon.id;
+        let id = digimon.id;
         digimon.nombre = nombreModificar;
         console.log("Carta actualizada: ", digimon);
-        await modificarNombre(id,nombreModificar);
+        await modificarNombre(id, nombreModificar);
         break;
       case 2:
         console.log("Desc actual: " + digimon.descripcion);
         let descModificar = await leeMenu("Escribe la nueva decripcion: ");
-        let idd= digimon.id;
+        let idd = digimon.id;
         digimon.nombre = descModificar;
         console.log("Carta actualizada: ", digimon);
-        await modificarDescripcion(idd,descModificar);
+        await modificarDescripcion(idd, descModificar);
 
 
         break;
       case 3:
-      console.log("Rareza actual: " + digimon.rareza);
+        console.log("Rareza actual: " + digimon.rareza);
         let rareModificar = await leeMenu("Escribe la nueva rareza: ");
-        let iddd= digimon.id;
+        let iddd = digimon.id;
         digimon.nombre = rareModificar;
         console.log("Carta actualizada: ", digimon);
-        await modificarRareza(iddd,rareModificar);
+        await modificarRareza(iddd, rareModificar);
 
         break;
-        
+
 
       case 4:
         await menuSQL();
@@ -676,3 +676,5 @@ async function modificarSQL(digimon) {
     }
   }
 }
+
+
