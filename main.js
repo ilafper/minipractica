@@ -1,7 +1,10 @@
 const mysql = require('mysql2/promise'); // Importamos la versión con promesas
 
 // Función que carga los datos y devuelve una promesa
+
+
 async function cargar() {
+
   try {
     const connection = await mysql.createConnection({
       host: 'localhost',
@@ -22,14 +25,9 @@ async function cargar() {
 
 // Usar la función con async/await
 
-
-
-
-
-
-
 const fs = require("fs");
 const readline = require("readline");
+
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
@@ -165,7 +163,7 @@ async function borrarBicho(codigo) {
 
     // DELETE con placeholder para evitar inyección SQL
     const sql = 'DELETE FROM bichos WHERE id = ?';
-    
+
     const [result] = await connection.execute(sql, [codigo]);
 
     console.log(`Bicho con id ${codigo} borrado correctamente.`);
@@ -209,95 +207,6 @@ async function menu() {
 }
 menu();
 
-async function menuSQL() {
-  let opcion = 0;
-  while (opcion !== 5) {
-    console.log("\n MENU DE SQL");
-    console.log("1. Crear carta nueva");
-    console.log("2. Borrar carta nueva");
-    console.log("3. Mostrar las cartas");
-    console.log("4. Modificar");
-    console.log("5. Salir");
-
-
-    opcion = parseInt(await leeMenu("Seleccione opción:"));
-
-    switch (opcion) {
-      case 1:
-       
-        let nuevoNombre = await leeMenu("Nuevo nombre:");
-        let nuevadescc = await leeMenu("Nueva descripcion:");
-        let nuevaRareza = await leeMenu("Nuevo rareza:");
-
-
-        let nuevoBicho = {
-          "nombre": nuevoNombre,
-          "descripcion": nuevadescc,
-          "rareza": nuevaRareza
-
-        }
-
-        console.log("Tu nuevo digimon");
-        console.log(nuevoBicho);
-        ;
-        
-        guardarBicho(nuevoNombre,nuevadescc,nuevaRareza);
-
-
-        break;
-      case 2:
-          console.log("Todos los digimons a borrar: ");
-          let bichos2 = await cargar();
-          for (let i = 0; i < bichos2.length; i++) {
-
-          console.log("id: " + bichos2[i].id + "-->" + "Nombre: " + bichos2[i].nombre);
-
-        }
-        let digimonSeleccionado = await leeMenu("Selecciona el digimon a borrar: ");
-        
-        borrarBicho(digimonSeleccionado);
-        
-
-        break;
-      case 3:
-
-        let bichos = await cargar();
-
-        console.log("LISTA DE DIGIMONS");
-        
-        for (let i = 0; i < bichos.length; i++) {
-
-          console.log("id: " + bichos[i].id + "-->" + "Nombre: " + bichos[i].nombre + "-->" + "Descripcion: " + bichos[i].descripcion + "-->" + "Rareza: " + bichos[i].rareza);
-
-        }
-        
-        break;
-      case 4:
-          console.log("\nEscoge para modificar:");
-          let bichos3 = await cargar();
-
-        
-        for (let i = 0; i < bichos3.length; i++) {
-
-          console.log("id: " + bichos3[i].id + "-->" + "Nombre: " + bichos3[i].nombre + "-->" + "Descripcion: " + bichos3[i].descripcion + "-->" + "Rareza: " + bichos3[i].rareza);
-
-        }
-         let digiModificar2 = await leeMenu("Selecciona la carta a modificar: ");
-         console.log(digiModificar2);
-         
-
-          modificarSQL(digiModificar2,bichos3);
-        break;
-      case 5:
-        console.log("Saliendo del menú");
-        rl.close();
-        break;
-      default:
-        console.log("Opción no válida");
-        break;
-    }
-  }
-}
 
 async function menuJSON() {
   let opcion = 0;
@@ -546,10 +455,179 @@ async function modificarJson(degi, datosCarta) {
   }
 }
 
-async function modificarSQL(digiModificar2, bichos3) {
+async function menuSQL() {
+  let opcion = 0;
+  while (opcion !== 5) {
+    console.log("\n MENU DE SQL");
+    console.log("1. Crear carta nueva");
+    console.log("2. Borrar carta nueva");
+    console.log("3. Mostrar las cartas");
+    console.log("4. Modificar");
+    console.log("5. Salir");
+
+
+    opcion = parseInt(await leeMenu("Seleccione opción:"));
+
+    switch (opcion) {
+      case 1:
+
+        let nuevoNombre = await leeMenu("Nuevo nombre:");
+        let nuevadescc = await leeMenu("Nueva descripcion:");
+        let nuevaRareza = await leeMenu("Nuevo rareza:");
+
+
+        let nuevoBicho = {
+          "nombre": nuevoNombre,
+          "descripcion": nuevadescc,
+          "rareza": nuevaRareza
+
+        }
+
+        console.log("Tu nuevo digimon");
+        console.log(nuevoBicho);
+        ;
+
+        guardarBicho(nuevoNombre, nuevadescc, nuevaRareza);
+
+
+        break;
+      case 2:
+        console.log("Todos los digimons a borrar: ");
+        let bichos2 = await cargar();
+        for (let i = 0; i < bichos2.length; i++) {
+
+          console.log("id: " + bichos2[i].id + "-->" + "Nombre: " + bichos2[i].nombre);
+
+        }
+        let digimonSeleccionado = await leeMenu("Selecciona el digimon a borrar: ");
+
+        borrarBicho(digimonSeleccionado);
+
+
+        break;
+      case 3:
+
+        let bichos = await cargar();
+
+        console.log("LISTA DE DIGIMONS");
+
+        for (let i = 0; i < bichos.length; i++) {
+
+          console.log("id: " + bichos[i].id + "-->" + "Nombre: " + bichos[i].nombre + "-->" + "Descripcion: " + bichos[i].descripcion + "-->" + "Rareza: " + bichos[i].rareza);
+
+        }
+
+        break;
+      case 4:
+        console.log("\nEscoge para modificar:");
+        let bichos3 = await cargar();
+
+
+        for (let i = 0; i < bichos3.length; i++) {
+
+          console.log(bichos3[i].id + "-->" + "Nombre: " + bichos3[i].nombre + "-->" + "Descripcion: " + bichos3[i].descripcion + "-->" + "Rareza: " + bichos3[i].rareza);
+
+        }
+
+        let digiModificar2 = await leeMenu("Selecciona la carta a modificar: ");
+        // Busca el objeto correspondiente
+        let digimonSeleccionadoObj = bichos3.find(d => d.id == digiModificar2);
+        console.log(digimonSeleccionadoObj);
+
+
+
+        await modificarSQL(digimonSeleccionadoObj);
+
+      case 5:
+        console.log("Saliendo del menú");
+        rl.close();
+        break;
+      default:
+        console.log("Opción no válida");
+        break;
+    }
+  }
+}
+
+//funcion para modificar el nombre.
+
+
+
+
+async function modificarNombre(id, nuevoValor) {
+  try {
+    const connection = await mysql.createConnection({
+      host: 'localhost',
+      user: 'root',
+      password: '',
+      database: 'digimon'
+    });
+
+    // DELETE con placeholder para evitar inyección SQL
+    const sql = `UPDATE bichos SET nombre = ? WHERE id = ?`;
+    const [result] = await connection.execute(sql, [nuevoValor, id]);
+
+   if (result.affectedRows > 0) {
+      console.log(`Carta con id ${id} modificada. Nuevo nombre: ${nuevoValor}`);
+    } else {
+      console.log("No se encontró la carta con ese ID.");
+    }
+  } catch (err) {
+    console.error('Error al borrar bicho:', err);
+  }
+}
+
+async function modificarDescripcion(id, nuevoValor) {
+  try {
+    const connection = await mysql.createConnection({
+      host: 'localhost',
+      user: 'root',
+      password: '',
+      database: 'digimon'
+    });
+
+    // DELETE con placeholder para evitar inyección SQL
+    const sql = `UPDATE bichos SET descripcion = ? WHERE id = ?`;
+    const [result] = await connection.execute(sql, [nuevoValor, id]);
+
+   if (result.affectedRows > 0) {
+      console.log(`Carta con id ${id} modificada. Nueva desc: ${nuevoValor}`);
+    } else {
+      console.log("No se encontró la carta con ese ID.");
+    }
+  } catch (err) {
+    console.error('Error al borrar digimon:', err);
+  }
+}
+
+async function modificarRareza(id, nuevoValor) {
+  try {
+    const connection = await mysql.createConnection({
+      host: 'localhost',
+      user: 'root',
+      password: '',
+      database: 'digimon'
+    });
+
+    // DELETE con placeholder para evitar inyección SQL
+    const sql = `UPDATE bichos SET rareza = ? WHERE id = ?`;
+    const [result] = await connection.execute(sql, [nuevoValor, id]);
+
+   if (result.affectedRows > 0) {
+      console.log(`Carta con id ${id} modificada. Nueva rareza: ${nuevoValor}`);
+    } else {
+      console.log("No se encontró la carta con ese ID.");
+    }
+  } catch (err) {
+    console.error('Error al borrar digimon:', err);
+  }
+}
+
+
+async function modificarSQL(digimon) {
   let opcion = 0;
 
-  while (opcion !== 3) {
+  while (opcion !== 4) {
     console.log("\n Elige el campo a modificar");
     console.log("1. Nombre");
     console.log("2. Descripcion");
@@ -561,57 +639,36 @@ async function modificarSQL(digiModificar2, bichos3) {
 
     switch (opcion) {
       case 1:
-        let nombreActual = digiModificar2.nombre;
-        console.log(nombreActual);
-
+        console.log("Nombre actual: " + digimon.nombre);
         let nombreModificar = await leeMenu("Escribe el nuevo nombre: ");
-        console.log(nombreModificar);
-
-        
+        let id= digimon.id;
+        digimon.nombre = nombreModificar;
+        console.log("Carta actualizada: ", digimon);
+        await modificarNombre(id,nombreModificar);
         break;
       case 2:
-        let descripcionActual = degi.descripcion;
-        console.log(descripcionActual);
-
-        let descModificar = await leeMenu("Escribe la  descripcion nombre: ");
-        console.log(descModificar);
-
-        let digimonActualizar2 = datosCarta.find(digimon => digimon.id === degi.id);
-        if (digimonActualizar2) {
-          digimonActualizar2.descripcion = descModificar;
-        }
+        console.log("Desc actual: " + digimon.descripcion);
+        let descModificar = await leeMenu("Escribe la nueva decripcion: ");
+        let idd= digimon.id;
+        digimon.nombre = descModificar;
+        console.log("Carta actualizada: ", digimon);
+        await modificarDescripcion(idd,descModificar);
 
 
-        console.log("Carta actualizada:");
-        console.log(datosCarta);
-
-
-
-        fs.writeFileSync('C:/Users/ialfper/Desktop/minipractica/cartas.json', JSON.stringify(datosCarta), 'utf-8');
         break;
       case 3:
+      console.log("Rareza actual: " + digimon.rareza);
+        let rareModificar = await leeMenu("Escribe la nueva rareza: ");
+        let iddd= digimon.id;
+        digimon.nombre = rareModificar;
+        console.log("Carta actualizada: ", digimon);
+        await modificarRareza(iddd,rareModificar);
 
-        let rareActual = degi.rareza;
-        console.log(rareActual);
-
-        let rareModificar = await leeMenu("Escribe la nueva raeza: ");
-        console.log(descModificar);
-
-        let digimonActualizar3 = datosCarta.find(digimon => digimon.id === degi.id);
-        if (digimonActualizar3) {
-          digimonActualizar3.rareza = rareModificar;
-        }
-
-
-
-        console.log("Carta actualizada:");
-        console.log(datosCarta);
-
-        fs.writeFileSync('C:/Users/ialfper/Desktop/minipractica/cartas.json', JSON.stringify(datosCarta), 'utf-8');
         break;
+        
 
       case 4:
-        await menuJSON();
+        await menuSQL();
         break;
       default:
         console.log("Opción no válida");
