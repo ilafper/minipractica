@@ -18,7 +18,7 @@ async function cargar() {
 
     return rows; // Devuelve los datos como array
   } catch (err) {
-    console.error('❌ Error al cargar bichos:', err);
+    console.error(' Error al cargar bichos:', err);
     return [];
   }
 }
